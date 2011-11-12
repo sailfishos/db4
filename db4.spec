@@ -12,15 +12,7 @@ Name: db4
 Version: 4.8.30
 Release: 1
 Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
-Source1: http://download.oracle.com/berkeley-db/db.1.85.tar.gz
-# db-1.85 upstream patches
-Patch10: http://www.oracle.com/technology/products/berkeley-db/db/update/1.85/patch.1.1
-Patch11: http://www.oracle.com/technology/products/berkeley-db/db/update/1.85/patch.1.2
-Patch12: http://www.oracle.com/technology/products/berkeley-db/db/update/1.85/patch.1.3
-Patch13: http://www.oracle.com/technology/products/berkeley-db/db/update/1.85/patch.1.4
 # other patches
-Patch20: db-1.85-errno.patch
-Patch22: db-4.6.21-1.85-compat.patch
 Patch24: db-4.5.20-jni-include-dir.patch
 Patch25: db-4-remove-timestamp.patch
 URL: http://www.oracle.com/database/berkeley-db/
@@ -116,57 +108,10 @@ client/server applications. This package contains the libraries
 for building programs which use the Berkeley DB in Java.
 
 %prep
-%setup -q -n db-%{version} -a 1
-
-pushd db.1.85/PORT/linux
-%patch10 -p0 -b .1.1
-popd
-pushd db.1.85
-%patch11 -p0 -b .1.2
-%patch12 -p0 -b .1.3
-%patch13 -p0 -b .1.4
-%patch20 -p1 -b .errno
-popd
-
-%patch22 -p1 -b .185compat
+%setup -q -n db-%{version}
 %patch24 -p1 -b .4.5.20.jni
 %patch25 -p1 -b .4timestamp
 # Remove tags files which we don't need.
-find . -name tags | xargs rm -f
-# Define a shell function for fixing HREF references in the docs, which
-# would otherwise break when we split the docs up into subpackages.
-fixup_href() {
-	for doc in $@ ; do
-		chmod u+w ${doc}
-		sed	-e 's,="../api_c/,="../../%{name}-devel-%{version}/api_c/,g' \
-			-e 's,="api_c/,="../%{name}-devel-%{version}/api_c/,g' \
-			-e 's,="../api_cxx/,="../../%{name}-devel-%{version}/api_cxx/,g' \
-			-e 's,="api_cxx/,="../%{name}-devel-%{version}/api_cxx/,g' \
-			-e 's,="../api_tcl/,="../../%{name}-devel-%{version}/api_tcl/,g' \
-			-e 's,="api_tcl/,="../%{name}-devel-%{version}/api_tcl/,g' \
-			-e 's,="../java/,="../../%{name}-devel-%{version}/java/,g' \
-			-e 's,="java/,="../%{name}-devel-%{version}/java/,g' \
-			-e 's,="../examples_c/,="../../%{name}-devel-%{version}/examples_c/,g' \
-			-e 's,="examples_c/,="../%{name}-devel-%{version}/examples_c/,g' \
-			-e 's,="../examples_cxx/,="../../%{name}-devel-%{version}/examples_cxx/,g' \
-			-e 's,="examples_cxx/,="../%{name}-devel-%{version}/examples_cxx/,g' \
-			-e 's,="../ref/,="../../%{name}-devel-%{version}/ref/,g' \
-			-e 's,="ref/,="../%{name}-devel-%{version}/ref/,g' \
-			-e 's,="../images/,="../../%{name}-devel-%{version}/images/,g' \
-			-e 's,="images/,="../%{name}-devel-%{version}/images/,g' \
-			-e 's,="../utility/,="../../%{name}-utils-%{version}/utility/,g' \
-			-e 's,="utility/,="../%{name}-utils-%{version}/utility/,g' ${doc} > ${doc}.new
-		touch -r ${doc} ${doc}.new
-		cat ${doc}.new > ${doc}
-		touch -r ${doc}.new ${doc}
-		rm -f ${doc}.new
-	done
-}
-
-set +x
-# Fix all of the HTML files.
-fixup_href `find . -name "*.html"`
-set -x
 
 cd dist
 ./s_config
@@ -174,14 +119,8 @@ cd dist
 %build
 CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"; export CFLAGS
 
-# Build the old db-185 libraries.
-make -C db.1.85/PORT/%{_os} OORG="$CFLAGS"
-
 build() {
 	test -d dist/$1 || mkdir dist/$1
-	# Static link db_dump185 with old db-185 libraries.
-	/bin/sh libtool --mode=compile	%{__cc} $RPM_OPT_FLAGS -Idb.1.85/PORT/%{_os}/include -D_REENTRANT -c db_dump185/db_dump185.c -o dist/$1/db_dump185.lo
-	/bin/sh libtool --mode=link	%{__cc} -o dist/$1/db_dump185 dist/$1/db_dump185.lo db.1.85/PORT/%{_os}/libdb.a
 
 	pushd dist
 	popd
@@ -191,7 +130,6 @@ build() {
 	# useful).
 	# XXX --enable-debug_{r,w}op should be disabled for production.
 	%configure -C \
-		--enable-compat185 --enable-dump185 \
 		--enable-shared --enable-static \
 		--enable-cxx \
 %ifarch %{java_arches}
@@ -263,7 +201,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/db4
 mv ${RPM_BUILD_ROOT}%{_includedir}/*.h ${RPM_BUILD_ROOT}%{_includedir}/db4/
 
 # Create symlinks to includes so that "use <db.h> and link with -ldb" works.
-for i in db.h db_cxx.h db_185.h; do
+for i in db.h db_cxx.h; do
 	ln -s db4/$i ${RPM_BUILD_ROOT}%{_includedir}
 done
 
@@ -330,10 +268,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/libdb_cxx.so
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/db.h
-%{_includedir}/%{name}/db_185.h
 %{_includedir}/%{name}/db_cxx.h
 %{_includedir}/db.h
-%{_includedir}/db_185.h
 %{_includedir}/db_cxx.h
 
 %files devel-static

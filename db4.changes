@@ -1,3 +1,6 @@
+* Sat Nov 12 2011 Carsten Munk <carsten@maemo.org> - 4.8.30
+- Drop db1.85 support and fixup_href which was pointless.
+
 * Sat Aug 20 2011 Carsten Munk <carsten@maemo.org> - 4.8.30
 - Remove timestamp to prevent unneeded rebuilds
 
