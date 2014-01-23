@@ -15,6 +15,7 @@ Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch
 Patch25: db-4-remove-timestamp.patch
+Patch26: db4-aarch64.patch
 URL: http://www.oracle.com/database/berkeley-db/
 License: BSD
 Group: System/Libraries
@@ -111,6 +112,8 @@ for building programs which use the Berkeley DB in Java.
 %setup -q -n db-%{version}
 %patch24 -p1 -b .4.5.20.jni
 %patch25 -p1 -b .4timestamp
+%patch26 -p1
+
 # Remove tags files which we don't need.
 
 cd dist
