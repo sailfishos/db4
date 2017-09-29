@@ -238,6 +238,10 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %postun -p /sbin/ldconfig java
 
+%post -p /sbin/ldconfig cxx
+
+%postun -p /sbin/ldconfig cxx
+
 %files
 %defattr(-,root,root)
 %doc LICENSE README
