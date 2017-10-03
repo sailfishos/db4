@@ -238,9 +238,13 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %postun -p /sbin/ldconfig java
 
+%post -p /sbin/ldconfig cxx
+
+%postun -p /sbin/ldconfig cxx
+
 %files
 %defattr(-,root,root)
-%doc LICENSE README
+%doc LICENSE
 /%{_lib}/libdb-%{__soversion}.so
 %{_libdir}/libdb-%{__soversion}.so
 
@@ -265,6 +269,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files devel
 %defattr(-,root,root)
+%doc README
 #%doc	docs/*
 #%doc	examples_c examples_cxx
 %{_libdir}/libdb.so
