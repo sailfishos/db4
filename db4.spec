@@ -10,7 +10,7 @@
 Summary: The Berkeley DB database library (version 4) for C
 Name: db4
 Version: 4.8.30
-Release: 1
+Release: 2
 Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch

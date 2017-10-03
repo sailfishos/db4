@@ -1,3 +1,6 @@
+* Tue Oct 3 2017 Pekka Vuorela <pekka.vuorela@jolla.com> - 4.8.30-2
+- Add ldconfig to cxx package too. Fixes JB#39839
+
 * Sat Nov 12 2011 Carsten Munk <carsten@maemo.org> - 4.8.30
 - Drop db1.85 support and fixup_href which was pointless.
 
