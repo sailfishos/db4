@@ -1,6 +1,3 @@
-# the set of arches on which libgcj provides gcj and libgcj-javac-placeholder.sh
-#define java_arches %{ix86} alpha ia64 ppc sparc sparcv9 x86_64 s390 s390x
-%define java_arches %{nil}
 %define __soversion 4.8
 
 # switch back to md5 file digests (due to rpm) until the dust settles a bit
@@ -20,11 +17,6 @@ URL: http://www.oracle.com/database/berkeley-db/
 License: BSD
 Group: System/Libraries
 BuildRequires: perl, libtool, ed, util-linux
-%ifarch %{java_arches}
-BuildRequires: gcc-java
-BuildRequires: java-1.6.0-openjdk-devel
-%endif
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
@@ -97,17 +89,6 @@ provides embedded database support for both traditional and
 client/server applications. This package contains the libraries
 for building programs which use the Berkeley DB in Tcl.
 
-%package java
-Summary: Development files for using the Berkeley DB (version 4) with Java
-Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
-
-%description java
-The Berkeley Database (Berkeley DB) is a programmatic toolkit that
-provides embedded database support for both traditional and
-client/server applications. This package contains the libraries
-for building programs which use the Berkeley DB in Java.
-
 %prep
 %setup -q -n db-%{version}
 %patch24 -p1 -b .4.5.20.jni
@@ -135,11 +116,7 @@ build() {
 	%configure -C \
 		--enable-shared --enable-static \
 		--enable-cxx \
-%ifarch %{java_arches}
-		--enable-java \
-%else
 		--disable-java \
-%endif
 		# --enable-diagnostic \
 		# --enable-debug --enable-debug_rop --enable-debug_wop \
 
@@ -152,12 +129,6 @@ build() {
 	perl -pi -e 's/-shared -nostdlib/-shared/' libtool
 
 	make %{?_smp_mflags}
-
-	# XXX hack around libtool not creating ./libs/libdb_java-X.Y.lai
-	LDBJ=./.libs/libdb_java-%{__soversion}.la
-	if test -f ${LDBJ} -a ! -f ${LDBJ}i; then
-		sed -e 's,^installed=no,installed=yes,' < ${LDBJ} > ${LDBJ}i
-	fi
 
 	popd
 }
@@ -180,24 +151,6 @@ rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdb_tcl.so
 
 chmod +x ${RPM_BUILD_ROOT}%{_libdir}/*.so*
 
-# Move the main shared library from /usr/lib* to /lib* directory.
-if [ "%{_libdir}" != "/%{_lib}" ]; then
-  mkdir -p $RPM_BUILD_ROOT/%{_lib}/
-  mv $RPM_BUILD_ROOT/%{_libdir}/libdb-%{__soversion}.so $RPM_BUILD_ROOT/%{_lib}/
-
-# Leave relative symlinks in %{_libdir}.
-  touch $RPM_BUILD_ROOT/rootfile
-  root=..
-  while [ ! -e $RPM_BUILD_ROOT/%{_libdir}/${root}/rootfile ] ; do
-	root=${root}/..
-  done
-  rm $RPM_BUILD_ROOT/rootfile
-
-  ln -sf ${root}/%{_lib}/libdb-%{__soversion}.so $RPM_BUILD_ROOT/%{_libdir}/libdb.so
-  ln -sf ${root}/%{_lib}/libdb-%{__soversion}.so $RPM_BUILD_ROOT/%{_libdir}/
-  ln -sf libdb_cxx-%{__soversion}.so $RPM_BUILD_ROOT/%{_libdir}/libdb_cxx.so
-fi
-
 # Move the header files to a subdirectory, in case we're deploying on a
 # system with multiple versions of DB installed.
 mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/db4
@@ -207,12 +160,6 @@ mv ${RPM_BUILD_ROOT}%{_includedir}/*.h ${RPM_BUILD_ROOT}%{_includedir}/db4/
 for i in db.h db_cxx.h; do
 	ln -s db4/$i ${RPM_BUILD_ROOT}%{_includedir}
 done
-
-%ifarch %{java_arches}
-# Move java jar file to the correct place
-mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/java
-mv ${RPM_BUILD_ROOT}%{_libdir}/*.jar ${RPM_BUILD_ROOT}%{_datadir}/java
-%endif
 
 # Eliminate installed doco
 rm -rf ${RPM_BUILD_ROOT}%{_prefix}/docs
@@ -234,10 +181,6 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %postun -p /sbin/ldconfig tcl
 
-%post -p /sbin/ldconfig java
-
-%postun -p /sbin/ldconfig java
-
 %post -p /sbin/ldconfig cxx
 
 %postun -p /sbin/ldconfig cxx
@@ -245,7 +188,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %files
 %defattr(-,root,root)
 %doc LICENSE
-/%{_lib}/libdb-%{__soversion}.so
 %{_libdir}/libdb-%{__soversion}.so
 
 %files cxx
@@ -285,22 +227,4 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/libdb-%{__soversion}.a
 %{_libdir}/libdb_cxx-%{__soversion}.a
 #%{_libdir}/libdb_tcl-%{__soversion}.a
-%ifarch %{java_arches}
-%{_libdir}/libdb_java-%{__soversion}.a
-%endif
-
-%if 0
-%files tcl
-%defattr(-,root,root)
-%{_libdir}/libdb_tcl-%{__soversion}.so
-%endif
-
-%ifarch %{java_arches}
-%files java
-%defattr(-,root,root)
-%doc docs/java
-%doc examples_java
-%{_libdir}/libdb_java*.so
-%{_datadir}/java/*.jar
-%endif
 
