@@ -16,7 +16,7 @@ Patch26: db4-aarch64.patch
 URL: http://www.oracle.com/database/berkeley-db/
 License: BSD
 Group: System/Libraries
-BuildRequires: perl, libtool, ed, util-linux
+BuildRequires: perl, libtool, util-linux
 
 %description
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
