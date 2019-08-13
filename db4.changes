@@ -1,3 +1,6 @@
+* Mon Aug 12 Marko Saukko <marko.saukko@jolla.com> - 4.8.30-4
+- Drop ed from build dependencies. Fixes JB#46907
+
 * Tue May 15 2018 Andrew Branson <andrew.branson@jollamobile.com> - 4.8.30-3
 - Remove java support as the disabling method previously used caused errors for the new RPM. JB#28828
 - Abandon /lib, other cleanups. JB#28828 JB#36606

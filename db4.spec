@@ -7,13 +7,13 @@
 Summary: The Berkeley DB database library (version 4) for C
 Name: db4
 Version: 4.8.30
-Release: 3
+Release: 4
 Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch
 Patch25: db-4-remove-timestamp.patch
 Patch26: db4-aarch64.patch
-URL: http://www.oracle.com/database/berkeley-db/
+URL: https://git.sailfishos.org/mer-core/db4
 License: BSD
 Group: System/Libraries
 BuildRequires: perl, libtool, util-linux
