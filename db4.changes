@@ -1,4 +1,4 @@
-* Mon Aug 12 Marko Saukko <marko.saukko@jolla.com> - 4.8.30-4
+* Mon Aug 12 2019 Marko Saukko <marko.saukko@jolla.com> - 4.8.30-4
 - Drop ed from build dependencies. Fixes JB#46907
 
 * Tue May 15 2018 Andrew Branson <andrew.branson@jollamobile.com> - 4.8.30-3
