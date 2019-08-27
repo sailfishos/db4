@@ -1,3 +1,9 @@
+* Tue Aug 27 2019 Niels Breet <niels.breet@jolla.com> - 4.8.30-5
+- Adjustments necessary in order for gcc with
+  -Werror=format-security to compile db4
+- atomic_compare_exchange patch
+  Contributes to JB#46923
+
 * Mon Aug 12 2019 Marko Saukko <marko.saukko@jolla.com> - 4.8.30-4
 - Drop ed from build dependencies. Fixes JB#46907
 
