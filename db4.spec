@@ -7,12 +7,14 @@
 Summary: The Berkeley DB database library (version 4) for C
 Name: db4
 Version: 4.8.30
-Release: 4
+Release: 5
 Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch
 Patch25: db-4-remove-timestamp.patch
 Patch26: db4-aarch64.patch
+Patch27: db-4.8.30-format-security.patch
+Patch28: db-4.8.30-atomic_compare_exchange.patch
 URL: https://git.sailfishos.org/mer-core/db4
 License: BSD
 Group: System/Libraries
@@ -94,6 +96,8 @@ for building programs which use the Berkeley DB in Tcl.
 %patch24 -p1 -b .4.5.20.jni
 %patch25 -p1 -b .4timestamp
 %patch26 -p1
+%patch27 -p1 -b .format-security
+%patch28 -p1 -b .atomic_cmpx
 
 # Remove tags files which we don't need.
 
