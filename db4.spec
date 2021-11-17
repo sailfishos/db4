@@ -7,17 +7,16 @@
 Summary: The Berkeley DB database library (version 4) for C
 Name: db4
 Version: 4.8.30
-Release: 5
-Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
+Release: 6
+Source0: db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch
 Patch25: db-4-remove-timestamp.patch
 Patch26: db4-aarch64.patch
 Patch27: db-4.8.30-format-security.patch
 Patch28: db-4.8.30-atomic_compare_exchange.patch
-URL: https://git.sailfishos.org/mer-core/db4
+URL: https://github.com/sailfishos/db4
 License: BSD
-Group: System/Libraries
 BuildRequires: perl, libtool, util-linux
 
 %description
@@ -32,7 +31,6 @@ be installed on all systems.
 
 %package cxx
 Summary: The Berkeley DB database library (version 4) for C++
-Group: System/Libraries
 
 %description cxx
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
@@ -46,7 +44,6 @@ be installed on all systems.
 
 %package utils
 Summary: Command line tools for managing Berkeley DB (version 4) databases
-Group: Applications/Databases
 Requires: db4 = %{version}-%{release}
 
 %description utils
@@ -59,7 +56,6 @@ recovery. DB supports C, C++, Java and Perl APIs.
 
 %package devel
 Summary: C development files for the Berkeley DB (version 4) library
-Group: Development/Libraries
 Requires: db4 = %{version}-%{release}
 
 %description devel
@@ -71,7 +67,6 @@ Berkeley DB.
 
 %package devel-static
 Summary: Berkeley DB (version 4) static libraries
-Group: Development/Libraries
 
 %description devel-static
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
@@ -82,7 +77,6 @@ Berkeley DB.
 
 %package tcl
 Summary: Development files for using the Berkeley DB (version 4) with tcl
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description tcl
@@ -92,12 +86,7 @@ client/server applications. This package contains the libraries
 for building programs which use the Berkeley DB in Tcl.
 
 %prep
-%setup -q -n db-%{version}
-%patch24 -p1 -b .4.5.20.jni
-%patch25 -p1 -b .4timestamp
-%patch26 -p1
-%patch27 -p1 -b .format-security
-%patch28 -p1 -b .atomic_cmpx
+%autosetup -p1 -n db-%{version}
 
 # Remove tags files which we don't need.
 
@@ -191,7 +180,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
-%doc LICENSE
+%license LICENSE
 %{_libdir}/libdb-%{__soversion}.so
 
 %files cxx

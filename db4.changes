@@ -1,3 +1,6 @@
+* Wed Nov 17 2021 Pekka Vuorela <pekka.vuorela@jolla.com> - 4.8.30-6
+- Include license as %license. JB#55991
+
 * Tue Aug 27 2019 Niels Breet <niels.breet@jolla.com> - 4.8.30-5
 - Adjustments necessary in order for gcc with
   -Werror=format-security to compile db4
