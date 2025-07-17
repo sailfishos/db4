@@ -1,3 +1,8 @@
+* Thu Jul 17 2025 Matti Lehtimäki <matti.lehtimaki@jolla.com> - 4.8.30-7
+- Fix build with gcc 15. JB#63045
+- Add CVE patch from OpenSUSE
+- Cleanup spec
+
 * Wed Nov 17 2021 Pekka Vuorela <pekka.vuorela@jolla.com> - 4.8.30-6
 - Include license as %license. JB#55991
 
@@ -79,7 +84,7 @@
 - fix license, remove .la files (#225675)
 - move static libraries to separate package
 
-* Fri Apr  3 2008 Jindrich Novy <jnovy@redhat.com> 4.6.21-5
+* Thu Apr  3 2008 Jindrich Novy <jnovy@redhat.com> 4.6.21-5
 - add upstream patch to fix a race condition between checkpoint
   and DB->close which can result in the checkpoint thread self-deadlocking
 
@@ -99,7 +104,7 @@
 * Mon Sep  3 2007 Jindrich Novy <jnovy@redhat.com> 4.6.19-1
 - update to 4.6.19 (#273461)
 
-* Thu Aug 29 2007 Jindrich Novy <jnovy@redhat.com> 4.6.18-2
+* Wed Aug 29 2007 Jindrich Novy <jnovy@redhat.com> 4.6.18-2
 - rebuild for BuildID
 - BR util-linux-ng
 
@@ -384,7 +389,7 @@
 - swallow a local copy of db1 and build db185_dump statically with it, to
   remove the build dependency and simplify bootstrapping new arches
 
-* Mon Jan 27 2002 Nalin Dahyabhai <nalin@redhat.com> 4.0.14-2
+* Sun Jan 27 2002 Nalin Dahyabhai <nalin@redhat.com> 4.0.14-2
 - have subpackages obsolete their db3 counterparts, because they conflict anyway
 
 * Tue Jan  8 2002 Jeff Johnson <jbj@redhat.com> db4-4.0.14-1
