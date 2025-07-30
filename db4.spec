@@ -7,7 +7,7 @@
 Summary: The Berkeley DB database library (version 4) for C
 Name: db4
 Version: 4.8.30
-Release: 6
+Release: 7
 Source0: db-%{version}.tar.gz
 # other patches
 Patch24: db-4.5.20-jni-include-dir.patch
@@ -15,6 +15,8 @@ Patch25: db-4-remove-timestamp.patch
 Patch26: db4-aarch64.patch
 Patch27: db-4.8.30-format-security.patch
 Patch28: db-4.8.30-atomic_compare_exchange.patch
+Patch29: db-4.8-sequence.patch
+Patch30: db-4.8-CVE-2019-2708.patch
 URL: https://github.com/sailfishos/db4
 License: BSD
 BuildRequires: perl, libtool, util-linux
@@ -94,7 +96,7 @@ cd dist
 ./s_config
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"; export CFLAGS
+CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -std=gnu99 -Wno-error=implicit-function-declaration"; export CFLAGS
 
 build() {
 	test -d dist/$1 || mkdir dist/$1
@@ -121,7 +123,7 @@ build() {
 	perl -pi -e 's/^postdep_objects=".*$/postdep_objects=""/' libtool
 	perl -pi -e 's/-shared -nostdlib/-shared/' libtool
 
-	make %{?_smp_mflags}
+	%make_build
 
 	popd
 }
@@ -133,7 +135,7 @@ rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_includedir}
 mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
 
-%makeinstall -C dist/dist-tls
+%make_install -C dist/dist-tls
 
 # XXX Nuke non-versioned archives and symlinks
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/{libdb.a,libdb_cxx.a}
@@ -163,9 +165,6 @@ chmod u+w ${RPM_BUILD_ROOT}%{_bindir} ${RPM_BUILD_ROOT}%{_bindir}/*
 # remove unneeded .la files (#225675)
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 
-%clean
-rm -rf ${RPM_BUILD_ROOT}
-
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -179,16 +178,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %postun -p /sbin/ldconfig cxx
 
 %files
-%defattr(-,root,root)
 %license LICENSE
 %{_libdir}/libdb-%{__soversion}.so
 
 %files cxx
-%defattr(-,root,root)
 %{_libdir}/libdb_cxx-%{__soversion}.so
 
 %files utils
-%defattr(-,root,root)
 %{_bindir}/db*_archive
 %{_bindir}/db*_checkpoint
 %{_bindir}/db*_deadlock
@@ -203,7 +199,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_bindir}/db*_verify
 
 %files devel
-%defattr(-,root,root)
 %doc README
 #%doc	docs/*
 #%doc	examples_c examples_cxx
@@ -216,7 +211,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_includedir}/db_cxx.h
 
 %files devel-static
-%defattr(-,root,root)
 %{_libdir}/libdb-%{__soversion}.a
 %{_libdir}/libdb_cxx-%{__soversion}.a
 #%{_libdir}/libdb_tcl-%{__soversion}.a
